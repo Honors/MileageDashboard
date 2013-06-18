@@ -191,4 +191,4 @@ app.get({
 	}
 });
 
-http.createServer(app);
+exports.module = http.createServer(app);
