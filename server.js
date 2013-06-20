@@ -1,7 +1,10 @@
 var http = require('http'),
 	app = require('./route'),
 	crypto = require('crypto'),
-	fs = require('fs');
+	fs = require('fs'),
+	mongoose = require('mongoose');
+		
+mongoose.connect('localhost', 'test');
 
 var formDigest = function(username, password) {
 	var sha256 = crypto.createHash("sha256");
@@ -26,6 +29,23 @@ var setupUserFolder = function(username, cb) {
 		}
 	});
 };
+
+var trip = mongoose.Schema({
+	distance: Number,
+	id: Number,
+	location: String,
+	Names: String,
+	Purpose: String,
+	username: String
+});
+var Trip = mongoose.model('Trip', trip);
+
+var user = mongoose.Schema({
+	username: String,
+	password: String,
+	email: String
+});
+var User = mongoose.model('User', user);
 
 var users = [{
 	username: "matt",
@@ -77,18 +97,30 @@ var trips = {
 	    }]*/
 };
 
-var userPresent = function(username) {
+var userPresent = function(username, cb) {
+	/*
 	var matches;
 	return (matches = users.filter(function(elm) {
 		return elm.username == username;
 	})).length > 0 ? matches[0] : false;
+	*/
+	User.findOne({username:username}, function(err, docs) {
+		cb(!err);
+	});
 };
 
 var getTrips = function(username, cb) {
-	cb(trips[username]);
+	//cb(trips[username]);
+	Trip.find({ username: username }, function(err, docs) {
+		if( !err ) cb(docs);
+		else { cb([]); }
+	});
 };
-var insertTrip = function(username, trip) {
-	trips[username].push(trip);
+var insertTrip = function(username, info) {
+	//trips[username].push(trip);
+	trip.username = username;	
+	var trip = new Trip(info);
+	trip.save();
 };
 
 app.get({
@@ -103,12 +135,13 @@ app.get({
 		req.on("data", function(chunk){buffer.push(chunk)});
 		req.on("end", function() {
 			var data = JSON.parse(buffer.join(""));
-			var match = userPresent(data.username, data.password);
-			res.end(JSON.stringify({ 
-				success: !!match, 
-				error: match?null:"Auth Failed.", 
-				token: match?formDigest(data.username, data.password):null 
-			})+'\n');
+			userPresent(data.username, function(match) {
+				res.end(JSON.stringify({ 
+					success: !!match, 
+					error: match?null:"Auth Failed.", 
+					token: match?formDigest(data.username, data.password):null 
+				})+'\n');
+			});			
 		});
 	}
 }).get({
@@ -128,31 +161,33 @@ app.get({
 		}
 
 		var user;
-		if( !(user = userPresent(username)) ) {
-			// Reject invalid usernames.
-			res.end(JSON.stringify({
-				success: false, 
-				error: "User does not exist." 
-			}) + '\n');
-			return;
-		}
-		
-		if( !auth(token, user.username, user.password) ) {
-			// Reject invalid tokens.
-			res.end(JSON.stringify({
-				success: false, 
-				error: "Token invalid." 
-			}) + '\n');
-			return;
-		}
-		
-		getTrips(user.username, function(trips) {
-			res.end(JSON.stringify({
-				success: !!trips.length,
-				error: trips.length?null:"No trips available.",
-				trips: trips
-			}) + '\n');
-		});
+		userPresent(username, function(present) {
+			if( !(user = present) ) {
+				// Reject invalid usernames.
+				res.end(JSON.stringify({
+					success: false, 
+					error: "User does not exist." 
+				}) + '\n');
+				return;
+			}
+			
+			if( !auth(token, user.username, user.password) ) {
+				// Reject invalid tokens.
+				res.end(JSON.stringify({
+					success: false, 
+					error: "Token invalid." 
+				}) + '\n');
+				return;
+			}
+			
+			getTrips(user.username, function(trips) {
+				res.end(JSON.stringify({
+					success: !!trips.length,
+					error: trips.length?null:"No trips available.",
+					trips: trips
+				}) + '\n');
+			});
+		});		
 	}
 }).post({
 	path: /\/api\/trip\/[^\/]+/,
@@ -176,28 +211,31 @@ app.get({
 			var data = JSON.parse(buffer.join(""));
 			
 			var user;
-			if( !(user = userPresent(username)) ) {
-				// Reject invalid usernames.
-				res.end(JSON.stringify({
-					success: false, 
-					error: "User does not exist." 
+			userPresent(username, function(present) {
+				if( !(user = present) ) {
+					// Reject invalid usernames.
+					res.end(JSON.stringify({
+						success: false, 
+						error: "User does not exist." 
+					}) + '\n');
+					return;
+				}
+				
+				if( !auth(token, user.username, user.password) ) {
+					// Reject invalid tokens.
+					res.end(JSON.stringify({
+						success: false, 
+						error: "Token invalid." 
+					}) + '\n');
+					return;
+				}
+				
+				insertTrip(user.username, data);
+				res.end(JSON.stringify({ 
+					success: true, 
+					error: null 
 				}) + '\n');
-				return;
-			}
-			if( !auth(token, user.username, user.password) ) {
-				// Reject invalid tokens.
-				res.end(JSON.stringify({
-					success: false, 
-					error: "Token invalid." 
-				}) + '\n');
-				return;
-			}
-			
-			insertTrip(user.username, data);
-			res.end(JSON.stringify({ 
-				success: true, 
-				error: null 
-			}) + '\n');
+			});									
 		});
 	}
 }).post({
