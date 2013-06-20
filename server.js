@@ -32,7 +32,7 @@ var users = [{
 	password: "drowssap"
 }];
 var trips = {
-	matt: [{
+	matt: []/*[{
 	        distance: 0,
 	        id : 403118680,
 	        location : "",
@@ -74,7 +74,7 @@ var trips = {
 	        names : "Matt Neary",
 	        purchase : "2 Coffees",
 	        purpose : "App Meeting",
-	    }]
+	    }]*/
 };
 
 var userPresent = function(username) {
