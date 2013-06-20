@@ -133,6 +133,18 @@ app.get({
 	cb: function(req, res) {
 		res.end("Please refer to API docs.");
 	}
+}).get({
+	path: /^\/admin\/dump/,
+	cb: function(req, res) {
+		User.find({}, function(err, users) {
+			Trip.find({}, function(err, trips) {
+				res.end(JSON.stringify({
+					users: users,
+					trips: trips
+				}));
+			});	
+		});
+	}
 }).post({
 	path: /^\/api\/login/,
 	cb: function(req, res) {
