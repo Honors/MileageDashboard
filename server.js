@@ -4,7 +4,7 @@ var http = require('http'),
 	fs = require('fs'),
 	mongoose = require('mongoose');
 		
-mongoose.connect('localhost', 'test');
+mongoose.createConnection('localhost', 'test');
 
 var formDigest = function(username, password) {
 	var sha256 = crypto.createHash("sha256");
