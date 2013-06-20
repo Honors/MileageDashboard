@@ -212,8 +212,8 @@ app.get({
 			});
 		};		
 		var buffer = [];
-		var boundary = req.headers['content-type'].split('=')[1].replace(/\s/g, '');
-		console.log(boundary);
+		var boundary = req.headers['content-type'].split('=')[1];
+		console.log(req.headers);
 		req.on("data", function(chunk) {
 			buffer.push(chunk);
 		});
