@@ -218,6 +218,7 @@ app.get({
 		});
 		req.on("end", function() {
 			var id_str = buffer.join("").match(/^Content-Disposition: form-data;[^\n]+\r\n\r\n([^\r]+)\r\n/m)[1];
+			console.log("sections", buffer.join("").split(boundary));
 			var data = buffer.join("").split(boundary)[2].split('\r\n\r\n').slice(1).join('\r\n\r\n').replace(/\r\n--$/,'');
 			console.log("with id", id_str, data.length);
 			if( !id_str || !data ) {
