@@ -122,6 +122,11 @@ var insertTrip = function(username, info) {
 	var trip = new Trip(info);
 	trip.save();
 };
+var insertUser = function(info) {
+	//trips[username].push(trip);
+	var user = new User(info);
+	user.save();
+};
 
 app.get({
 	path: /^/,
@@ -138,10 +143,39 @@ app.get({
 			userPresent(data.username, function(match) {
 				var success = match && match.password == data.password;
 				res.end(JSON.stringify({ 
-					success: success, 
+					success: !!success, 
 					error: success?null:"Auth Failed.", 
 					token: success?formDigest(data.username, data.password):null 
 				})+'\n');
+			});			
+		});
+	}
+}).post({
+	path: /^\/api\/register/,
+	cb: function(req, res) {
+		var buffer = [];
+		req.on("data", function(chunk){buffer.push(chunk)});
+		req.on("end", function() {
+			var data = JSON.parse(buffer.join(""));
+			userPresent(data.username, function(match) {
+				if( match ) {
+					res.end(JSON.stringify({ 
+						success: false, 
+						error: "Username taken.", 
+						token: null
+					})+'\n');
+				} else {
+					insertUser({
+						username: data.username,
+						password: data.password,
+						email: data.email
+					});
+					res.end(JSON.stringify({ 
+						success: true, 
+						error: null, 
+						token: formDigest(data.username, data.password) 
+					})+'\n');
+				}
 			});			
 		});
 	}

@@ -4,6 +4,13 @@ Get Token
 
 	{"success":true,"error":null,"token":"zYcW0HF4ikBN2m3WpjCGzGZSU685XCzmjs4WjFQ4"}
 
+Make Account
+------------
+`curl -d "{\"username\":\"matt\", \"password\":\"drowssap\", \"email\":\"neary.matt@gmail.com\"}" localhost:8080/api/register`
+
+	{"success":true,"error":null,"token":"zYcW0HF4ikBN2m3WpjCGzGZSU685XCzmjs4WjFQ4"}
+
+
 Get Trips
 ---------
 `curl localhost:8080/api/trips/matt?token=zYcW0HF4ikBN2m3WpjCGzGZSU685XCzmjs4WjFQ4`
