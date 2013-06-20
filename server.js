@@ -105,7 +105,7 @@ var userPresent = function(username, cb) {
 	})).length > 0 ? matches[0] : false;
 	*/
 	User.findOne({username:username}, function(err, docs) {
-		cb(!err);
+		cb(docs);
 	});
 };
 
@@ -136,10 +136,11 @@ app.get({
 		req.on("end", function() {
 			var data = JSON.parse(buffer.join(""));
 			userPresent(data.username, function(match) {
+				var success = match && match.password == data.password;
 				res.end(JSON.stringify({ 
-					success: !!match, 
-					error: match?null:"Auth Failed.", 
-					token: match?formDigest(data.username, data.password):null 
+					success: success, 
+					error: success?null:"Auth Failed.", 
+					token: success?formDigest(data.username, data.password):null 
 				})+'\n');
 			});			
 		});
