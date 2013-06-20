@@ -204,7 +204,9 @@ app.get({
 		var username = req.url.substr(1).split('/')[2].split('?')[0];
 		var writeUpload = function(id_str, data) {
 			setupUserFolder(username, function() {
+				console.log("write to", __dirname+'/'+username+'/'+id_str+'.jpg');
 				fs.writeFile(__dirname+'/'+username+'/'+id_str+'.jpg', data, function(err) {
+					if( err ) console.log("error writing", err);
 					res.end(JSON.stringify({ success: !err, error: err }) + '\n');
 				});
 			});
