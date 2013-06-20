@@ -213,12 +213,13 @@ app.get({
 		};		
 		var buffer = [];
 		var boundary = req.headers['content-type'].split('=')[1].replace(/\s/g, '');
+		console.log(boundary);
 		req.on("data", function(chunk) {
 			buffer.push(chunk);
 		});
 		req.on("end", function() {
 			var id_str = buffer.join("").match(/^Content-Disposition: form-data;[^\n]+\r\n\r\n([^\r]+)\r\n/m)[1];
-			console.log("sections", buffer.join("").split(boundary));
+			console.log("sections", buffer.join("").split(boundary).length);
 			var data = buffer.join("").split(boundary)[2].split('\r\n\r\n').slice(1).join('\r\n\r\n').replace(/\r\n--$/,'');
 			console.log("with id", id_str, data.length);
 			if( !id_str || !data ) {
