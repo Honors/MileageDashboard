@@ -255,4 +255,4 @@ app.get({
 	}
 });
 
-exports.module = http.createServer(app).listen(8080);
+exports.module = http.createServer(app);
