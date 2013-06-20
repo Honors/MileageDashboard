@@ -212,7 +212,7 @@ app.get({
 			});
 		};		
 		var buffer = [];
-		var boundary = req.headers['content-type'].split('=')[1];
+		var boundary = req.headers['content-type'].split('=')[1].replace(/\s/g, '');
 		req.on("data", function(chunk) {
 			buffer.push(chunk);
 		});
