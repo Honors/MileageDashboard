@@ -1,6 +1,7 @@
 var http = require('http'),
 	app = require('./route'),
-	crypto = require('crypto');
+	crypto = require('crypto'),
+	fs = require('fs');
 
 var formDigest = function(username, password) {
 	var sha256 = crypto.createHash("sha256");
@@ -14,6 +15,14 @@ var auth = function(token, username, password) {
 
 var divideUrl = function(url) {
 	return url.substr(1).split(/\/|\?/);
+};
+
+var setupUserFolder = function(username, cb) {
+	fs.stat(__dirname + '/' + username, function(err, stats) {
+		if( err ) {
+			fs.mkdir(__dirname + '/' + username, cb);
+		}
+	});
 };
 
 var users = [{
@@ -189,6 +198,61 @@ app.get({
 			}) + '\n');
 		});
 	}
+}).post({
+	path: /\/api\/asset\/[^\/]+/,
+	cb: function(req, res) {
+		var username = req.url.substr(1).split('/')[2].split('?')[0];
+		var writeUpload = function(id_str, data) {
+			setupUserFolder(username, function() {
+				fs.writeFile(__dirname+'/'+username+'/'+id_str+'.jpg', data, function(err) {
+					res.end(JSON.stringify({ success: !err, error: err }) + '\n');
+				});
+			});
+		};		
+		var buffer = [];
+		var boundary = req.headers['content-type'].split('=')[1];
+		console.log("boundary", boundary);
+		req.on("data", function(chunk) {
+			buffer.push(chunk);
+		});
+		req.on("end", function() {
+			var id_str = buffer.join("").match(/^Content-Disposition: form-data;[^\n]+\r\n\r\n([^\r]+)\r\n/m)[1];
+			var data = buffer.join("").split(boundary)[2].split('\r\n\r\n').slice(1).join('\r\n\r\n').replace(/\r\n--$/,'');
+			if( !id_str || !data ) {
+				res.end(JSON.stringify({ success: false, error: "id or data not provided." }) + '\n');
+				return;
+			}
+			writeUpload(id_str, data);
+		});		
+	}
+}).get({
+	path: /\/api\/asset\/[^\/]+\/[^\/]+/,
+	cb: function(req, res) {
+		var parts, username, id_str;
+		try {
+			parts = divideUrl(req.url);
+			username = parts[2];
+			id_str = parts[3];
+		} catch(err) {
+			res.end(JSON.stringify({
+				success: false, 
+				error: "A parse error occurred." 
+			}) + '\n');
+		}
+		
+		fs.stat([__dirname, username, id_str+'.jpg'].join('/'), function(err) {
+			if( err ) {
+				res.writeHead(404);
+				res.end(JSON.stringify({
+					success: false, 
+					error: "Asset is not present." 
+				}) + '\n');
+			} else {
+				res.writeHead(200, { 'Content-Type': 'image/jpeg' });
+				fs.createReadStream([__dirname, username, id_str+'.jpg'].join('/')).pipe(res);
+			}
+		});
+	}
 });
 
-exports.module = http.createServer(app);
+exports.module = http.createServer(app).listen(8080);
