@@ -45,7 +45,7 @@ var user = mongoose.Schema({
 	password: String,
 	email: String
 });
-var User = mongoose.model('User', user);
+var User = mongoose.model('MileageUser', user);
 
 var users = [{
 	username: "matt",
