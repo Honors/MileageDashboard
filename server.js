@@ -211,7 +211,6 @@ app.get({
 		};		
 		var buffer = [];
 		var boundary = req.headers['content-type'].split('=')[1];
-		console.log("boundary", boundary);
 		req.on("data", function(chunk) {
 			buffer.push(chunk);
 		});
