@@ -52,78 +52,27 @@ var users = [{
 	password: "drowssap"
 }];
 var trips = {
-	matt: []/*[{
-	        distance: 0,
-	        id : 403118680,
-	        location : "",
-	        names : "",
-	        purpose : "",
-	    },
-	        {
-	        distance : 0,
-	        id : 822328688,
-	        location : "",
-	        names : "",
-	        purpose : "",
-	    },
-	        {
-	        distance : 0,
-	        id : 403118680,
-	        location : "",
-	        names : "",
-	        purpose : "",
-	    },
-	        {
-	        distance : "2446.486083984375",
-	        id : 403118680,
-	        location : "",
-	        names : "",
-	        purpose : "",
-	    },
-	        {
-	        distance : "6288.80615234375",
-	        id : 822328688,
-	        location : "",
-	        names : "",
-	        purpose : "",
-	    },
-	        {
-	        distance : 0,
-	        id : 403118680,
-	        location : "Work",
-	        names : "Matt Neary",
-	        purchase : "2 Coffees",
-	        purpose : "App Meeting",
-	    }]*/
+	matt: []
 };
 
 var userPresent = function(username, cb) {
-	/*
-	var matches;
-	return (matches = users.filter(function(elm) {
-		return elm.username == username;
-	})).length > 0 ? matches[0] : false;
-	*/
 	User.findOne({username:username}, function(err, docs) {
 		cb(docs);
 	});
 };
 
 var getTrips = function(username, cb) {
-	//cb(trips[username]);
 	Trip.find({ username: username }, function(err, docs) {
 		if( !err ) cb(docs);
 		else { cb([]); }
 	});
 };
 var insertTrip = function(username, info) {
-	//trips[username].push(trip);
-	trip.username = username;	
+	info.username = username;	
 	var trip = new Trip(info);
 	trip.save();
 };
 var insertUser = function(info) {
-	//trips[username].push(trip);
 	var user = new User(info);
 	user.save();
 };
@@ -256,7 +205,7 @@ app.get({
 		req.on("data", function(chunk){buffer.push(chunk)});
 		req.on("end", function() {
 			var data = JSON.parse(buffer.join(""));
-			
+			console.log(buffer.join(""));
 			var user;
 			userPresent(username, function(present) {
 				if( !(user = present) ) {
