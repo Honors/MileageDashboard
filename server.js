@@ -83,6 +83,14 @@ app.get({
 		res.end("Please refer to API docs.");
 	}
 }).get({
+	path: /^\/admin\/clear\/[^\/]+/,
+	cb: function(req, res) {
+		var user = req.url.substr(1).split('/')[2];
+		Trip.find({username: user}, function() {
+			res.end(JSON.stringify({ success: true, error: null }));
+		});
+	}
+}).get({
 	path: /^\/admin\/dump/,
 	cb: function(req, res) {
 		User.find({}, function(err, users) {
