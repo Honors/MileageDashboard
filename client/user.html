@@ -61,8 +61,7 @@
 			if( !cookie.token ) {
 				// handle error...
 			} else {
-				$.get('/api/trips/'+cookie.username+'?token='+cookie.token, function(data) {
-					console.log("data", data);			
+				$.get('/api/trips/'+cookie.user+'?token='+cookie.token, function(data) {			
 					var trips = JSON.parse(data).trips;
 					var tmpl = $("#trip_tmpl").text();
 					trips.map(function(trip) {
