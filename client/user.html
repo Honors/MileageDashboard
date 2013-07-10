@@ -59,7 +59,7 @@
 				return dict;
 			}(document.cookie));
 			if( !cookie.token ) {
-				// handle error...
+				location.href = '/login';
 			} else {
 				$.get('/api/trips/'+cookie.username+'?token='+cookie.token, function(data) {
 					var trips = JSON.parse(data).trips;

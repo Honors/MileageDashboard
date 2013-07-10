@@ -45,6 +45,9 @@
 				padding: 4px 7px;
 				font-family: 'Helvetica Neue';
 			}
+			form.error {
+				border: 1px solid red;
+			}
 			form {
 				width: 100%;
 				margin: 0;
@@ -71,7 +74,7 @@
 						document.cookie = 'username='+username+';';
 						location.href = '/user';
 					} else {
-						// handle error...
+						$("form").addClass('error')
 					}
 				});
 			});
