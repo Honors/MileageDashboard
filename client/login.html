@@ -30,6 +30,9 @@
 				background: white;
 				border: 1px solid #ccc;
 			}
+			#content.error {
+				border: 1px solid red;
+			}
 			#header {
 				height: 50px;
 			}
@@ -44,9 +47,6 @@
 				margin: 0;
 				padding: 4px 7px;
 				font-family: 'Helvetica Neue';
-			}
-			form.error {
-				border: 1px solid red;
 			}
 			form {
 				width: 100%;
@@ -64,8 +64,8 @@
 		</style>
 		<script>
 			$("form").submit(function(evt) {
-				var username = $("username").val(),
-					password = $("password").val();
+				var username = $("#username").val(),
+					password = $("#password").val();
 				evt.preventDefault();
 				$.post('/api/login', JSON.stringify({"username":username, "password":password}), function(data) {
 					var resp = JSON.parse(data);
@@ -74,7 +74,7 @@
 						document.cookie = 'username='+username+';';
 						location.href = '/user';
 					} else {
-						$("form").addClass('error')
+						$("#content").addClass('error')
 					}
 				});
 			});
