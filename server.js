@@ -247,25 +247,22 @@ app.get({
 	cb: function(req, res) {
 		var username = req.url.substr(1).split('/')[2],
 			id_str = req.url.substr(1).split('/')[3].split('?')[0];
-		var writeUpload = function(id_str, data) {
-			setupUserFolder(username, function() {
-				fs.writeFile(__dirname+'/'+username+'/'+id_str+'.jpg', data, function(err) {
-					res.end(JSON.stringify({ success: !err, error: err }) + '\n');
-				});
-			});
-		};		
-		var buffer = [];
-		var boundary = req.headers['content-type'].split('=')[1];
-		req.on("data", function(chunk) {
-			buffer.push(chunk);
+			
+		var upload;
+		setupUserFolder(username, function() {
+			upload = fs.createWriteStream(__dirname+'/'+username+'/'+id_str+'.jpg', {'flags': 'w'});
 		});
-		req.on("end", function() {
-			var data = buffer.join('');
-			if( !id_str || !data ) {
+		req.on("data", function(chunk) {
+			upload.write(chunk);
+		});
+		req.on("end", function() {			
+			upload.end();
+			if( !id_str ) {
 				res.end(JSON.stringify({ success: false, error: "id or data not provided." }) + '\n');
 				return;
-			}	
-			writeUpload(id_str, data);
+			} else {
+				res.end(JSON.stringify({ success: true, error: null }) + '\n');
+			}
 		});		
 	}
 }).get({
