@@ -11,8 +11,8 @@
 				<h1>Login to Mileage</h1>
 			</div>
 			<form>
-				<input type="text" placeholder="username">
-				<input type="password" placeholder="password">
+				<input type="text" placeholder="username" id="username">
+				<input type="password" placeholder="password" id="password">
 				<input type="submit" value="Login">
 			</form>
 		</div>
@@ -64,8 +64,8 @@
 		</style>
 		<script>
 			$("form").submit(function(evt) {
-				var username = "matt",
-					password = "drowssap";
+				var username = $("username").val(),
+					password = $("password").val();
 				evt.preventDefault();
 				$.post('/api/login', JSON.stringify({"username":username, "password":password}), function(data) {
 					var resp = JSON.parse(data);
