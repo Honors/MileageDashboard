@@ -32,7 +32,7 @@ var setupUserFolder = function(username, cb) {
 
 var trip = mongoose.Schema({
 	distance: Number,
-	id: Number,
+	id: String,
 	location: String,
 	Names: String,
 	Purpose: String,
