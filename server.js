@@ -90,7 +90,7 @@ app.get({
 }).get({
 	path: /^\/(login|user)$/,
 	cb: function(req, res) {
-		var pages = { login: 'client/login.html', user: 'client/user.html' };
+		var pages = { login: '/client/login.html', user: '/client/user.html' };
 		res.writeHead(200, { 'Content-Type': 'text/html' });
 		fs.createReadStream(__dirname + pages[req.url.substr(1)]).pipe(res);
 	}
