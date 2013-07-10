@@ -256,7 +256,7 @@ app.get({
 			upload.write(chunk);
 		});
 		req.on("end", function() {			
-			upload.end();
+			setTimeout(function() { upload.end(); }, 0);
 			if( !id_str ) {
 				res.end(JSON.stringify({ success: false, error: "id or data not provided." }) + '\n');
 				return;
