@@ -48,17 +48,31 @@
 			}
 		</style>
 		<script>
-			$.get('/api/trips/matt?token=zYcW0HF4ikBN2m3WpjCGzGZSU685XCzmjs4WjFQ4', function(data) {
-				var trips = JSON.parse(data).trips;
-				var tmpl = $("#trip_tmpl").text();
-				trips.map(function(trip) {
-					return tmpl.replace(/\$\{([^}]+)\}/g, function($0, $1) {
-						return trip[$1];
-					});
-				}).forEach(function(trip) {
-					$("#content").append(trip);
+			var cookie = (function(cookie) {
+				var dict = {};
+				cookie.split(';').forEach(function(pair) {
+					if( pair.split('=').length == 2 ) {
+						pair = pair.split('=');
+						dict[pair[0]] = pair[1];
+					}
 				});
-			});
+				return dict;
+			}(document.cookie));
+			if( !cookie.token ) {
+				// handle error...
+			} else {
+				$.get('/api/trips/'+cookie.username+'?token='+cookie.token, function(data) {
+					var trips = JSON.parse(data).trips;
+					var tmpl = $("#trip_tmpl").text();
+					trips.map(function(trip) {
+						return tmpl.replace(/\$\{([^}]+)\}/g, function($0, $1) {
+							return trip[$1];
+						});
+					}).forEach(function(trip) {
+						$("#content").append(trip);
+					});
+				});
+			}
 		</script>
 	</body>
 </html>

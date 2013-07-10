@@ -1,7 +1,8 @@
 <!DOCTYPE>
 <html>
 	<head>
-		<title></title>
+		<title>Login to Mileage</title>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.js"></script>
 	</head>
 	<body>
 		<div id="content">
@@ -58,5 +59,22 @@
 					width: 100%;
 				}
 		</style>
+		<script>
+			$("form").submit(function(evt) {
+				var username = "matt",
+					password = "drowssap";
+				evt.preventDefault();
+				$.post('/api/login', JSON.stringify({"username":username, "password":password}), function(data) {
+					var resp = JSON.parse(data);
+					if( resp.success ) {
+						document.cookie = 'token='+resp.token+';';
+						document.cookie = 'username='+username+';';
+						location.href = '/user';
+					} else {
+						// handle error...
+					}
+				});
+			});
+		</script>
 	</body>
 </html>
