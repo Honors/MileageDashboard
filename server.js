@@ -243,9 +243,10 @@ app.get({
 		});
 	}
 }).post({
-	path: /\/api\/asset\/[^\/]+/,
+	path: /\/api\/asset\/[^\/]+\/[^\/]+/,
 	cb: function(req, res) {
-		var username = req.url.substr(1).split('/')[2].split('?')[0];
+		var username = req.url.substr(1).split('/')[2],
+			id_str = req.url.substr(1).split('/')[3].split('?')[0];
 		var writeUpload = function(id_str, data) {
 			setupUserFolder(username, function() {
 				fs.writeFile(__dirname+'/'+username+'/'+id_str+'.jpg', data, function(err) {
@@ -259,12 +260,11 @@ app.get({
 			buffer.push(chunk);
 		});
 		req.on("end", function() {
-			var id_str = buffer.join("").match(/^Content-Disposition: form-data;[^\n]+\r\n\r\n([^\r]+)\r\n/m)[1];
-			var data = buffer.join("").split(boundary)[2].split('\r\n\r\n').slice(1).join('\r\n\r\n').replace(/\r\n--$/,'');
+			var data = buffer.join('');
 			if( !id_str || !data ) {
 				res.end(JSON.stringify({ success: false, error: "id or data not provided." }) + '\n');
 				return;
-			}
+			}	
 			writeUpload(id_str, data);
 		});		
 	}
