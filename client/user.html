@@ -62,6 +62,7 @@
 				// handle error...
 			} else {
 				$.get('/api/trips/'+cookie.username+'?token='+cookie.token, function(data) {
+					console.log("data", data);			
 					var trips = JSON.parse(data).trips;
 					var tmpl = $("#trip_tmpl").text();
 					trips.map(function(trip) {
