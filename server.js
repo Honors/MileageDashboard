@@ -248,15 +248,33 @@ app.get({
 		var username = req.url.substr(1).split('/')[2],
 			id_str = req.url.substr(1).split('/')[3].split('?')[0];
 			
-		var upload;
+		var upload, writeCache = [], shouldEnd = false;
 		setupUserFolder(username, function() {
 			upload = fs.createWriteStream(__dirname+'/'+username+'/'+id_str+'.jpg', {'flags': 'w'});
+			writeCache.map(write);
+			if( shouldEnd ) {
+				upload.end();
+			}
 		});
+		var write = function(chunk) {
+			if( upload ) {
+				upload.write(chunk);
+			} else {
+				writeCache.push(chunk);
+			}
+		};
+		var end = function() {
+			if( upload ) {
+				upload.end();
+			} else {
+				shouldEnd = true;
+			}
+		};
 		req.on("data", function(chunk) {
-			upload.write(chunk);
+			write(chunk);
 		});
 		req.on("end", function() {			
-			setTimeout(function() { upload.end(); }, 0);
+			end();
 			if( !id_str ) {
 				res.end(JSON.stringify({ success: false, error: "id or data not provided." }) + '\n');
 				return;
