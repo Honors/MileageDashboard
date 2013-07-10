@@ -83,9 +83,19 @@ app.get({
 		res.end("Please refer to API docs.");
 	}
 }).get({
-	path: /^/,
+	path: /^\/asset\/[^\/]+/,
 	cb: function(req, res) {
-		res.end("Please refer to API docs.");
+		var file = req.url.substr(1).split('/').slice(1).join('/'),
+			path = __dirname + '/' + file;
+		fs.stat(path, function(err, stat) {
+		    if (!err) {
+				res.writeHead(200, {'Content-Type': 'text/html'});
+				fs.createReadStream(path).pipe(res);
+		    } else {
+		        res.writeHead(404);
+		        res.end();
+		    }
+		});
 	}
 }).get({
 	path: /^\/(login|user)$/,
