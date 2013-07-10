@@ -83,12 +83,16 @@ app.get({
 		res.end("Please refer to API docs.");
 	}
 }).get({
-	path: /^\/admin\/clear\/[^\/]+/,
+	path: /^/,
 	cb: function(req, res) {
-		var user = req.url.substr(1).split('/')[2];
-		Trip.remove({username: user}, function() {
-			res.end(JSON.stringify({ success: true, error: null }));
-		});
+		res.end("Please refer to API docs.");
+	}
+}).get({
+	path: /^\/(login|user)$/,
+	cb: function(req, res) {
+		var pages = { login: 'client/login.html', user: 'client/user.html' };
+		res.writeHead(200, { 'Content-Type': 'text/html' });
+		fs.createReadStream(__dirname + pages[req.url.substr(1)]).pipe(res);
 	}
 }).get({
 	path: /^\/admin\/dump/,
