@@ -6,10 +6,23 @@
 	</head>
 	<body>
 		<div id="content">
-		
-		</div>
+			<div id="trips"></div>
+			<div id="details">
+				<h2>Matt's House</h2>
+				<dl>
+					<dt>Destination</dt>
+					<dd>2786 Elginfield Rd</dd>
+					<dt>People</dt>
+					<dd>Matt Neary</dd>
+					<dt>Purchases</dt>
+					<dd>2 x Coffee</dd>
+					<dt>Purpose</dt>
+					<dd>App Meeting</dd>
+				</dl>
+			</div>			
+		</div>		
 		<script type="text/html" id="trip_tmpl">
-			<div class="trip">
+			<div class="trip" data-id="${id}">
 				<h2>${distance}<sub>miles</sub></h2>
 				<div class="thumbs">
 					<img src="http://dashboard.mileageapp.co/api/asset/matt/${id}-end">
@@ -18,12 +31,31 @@
 			</div>
 		</script>
 		<style>
+			body {
+				font-family: 'Helvetica Neue';
+				font-weight: lighter;
+			}
 			#content {
-				width: 320px;
+				width: 700px;
 				position: absolute;
 				left: 50%;
-				margin-left: -160px;
+				margin-left: -350px;
 				border: 1px solid #333;
+				float: left;
+			}
+			#trips {
+				width: 320px;	
+				float: left;
+			}
+			#details {
+				float: left;
+				width: 379px;
+				box-sizing: border-box;
+				padding: 10px;
+				border-left: 1px solid #333;
+			}
+			#details h2 {
+				margin: 0;
 			}
 			.trip {
 				width: 320px;
@@ -31,9 +63,8 @@
 				padding: 10px 20px;
 			}
 			.trip h2 {
-				float: left;
-				font-family: 'Helvetica Neue';
-				font-weight: lighter;
+				float: left;		
+				font-weight: lighter;		
 				margin-right: 20px;
 			}
 			.trip h2 sub {
@@ -48,6 +79,7 @@
 			}
 		</style>
 		<script>
+			var trips = [];
 			var cookie = (function(cookie) {
 				var dict = {};
 				cookie.split(/;\s?/).forEach(function(pair) {
@@ -62,17 +94,20 @@
 				location.href = '/login';
 			} else {
 				$.get('/api/trips/'+cookie.username+'?token='+cookie.token, function(data) {
-					var trips = JSON.parse(data).trips;
+					trips = JSON.parse(data).trips;
 					var tmpl = $("#trip_tmpl").text();
 					trips.map(function(trip) {
 						return tmpl.replace(/\$\{([^}]+)\}/g, function($0, $1) {
 							return trip[$1];
 						});
 					}).forEach(function(trip) {
-						$("#content").append(trip);
+						$("#trips").append(trip);
 					});
 				});
 			}
+			$(".trip").click(function(evt) {
+				var id = $(this).data("id");
+			});
 		</script>
 	</body>
 </html>
