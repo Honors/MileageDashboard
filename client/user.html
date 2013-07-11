@@ -81,6 +81,19 @@
 		</style>
 		<script>
 			var trips = [];
+			var trip_listen = function() {
+				$(".trip").click(function(evt) {
+					var id = $(this).data("id");
+					var trip = trips.filter(function(trip) {
+						return trip.id == id;
+					})[0];
+					$("#details h2").text(trip.location);
+					$("#dest-value").text(trip.location);
+					$("#people-value").text(trip.people);
+					$("#purchases-value").text(trip.purchases);
+					$("#purpose-value").text(trip.purpose);
+				});
+			};
 			var cookie = (function(cookie) {
 				var dict = {};
 				cookie.split(/;\s?/).forEach(function(pair) {
@@ -104,19 +117,9 @@
 					}).forEach(function(trip) {
 						$("#trips").append(trip);
 					});
+					trip_listen();
 				});
-			}
-			$(".trip").click(function(evt) {
-				var id = $(this).data("id");
-				var trip = trips.filter(function(trip) {
-					return trip.id == id;
-				})[0];
-				$("#details h2").text(trip.location);
-				$("#dest-value").text(trip.location);
-				$("#people-value").text(trip.people);
-				$("#purchases-value").text(trip.purchases);
-				$("#purpose-value").text(trip.purpose);
-			});
+			}			
 		</script>
 	</body>
 </html>
