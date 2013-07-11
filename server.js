@@ -325,6 +325,51 @@ app.get({
 			}
 		});
 	}
+}).get({
+	path: /^\/api\/export\/[^\/]+/,
+	cb: function(req, res) {
+		var parts, username, token;
+		try {
+			parts = divideUrl(req.url);
+			username = parts[2];
+			// TODO: actual parameter parsing
+			token = req.url.split('?')[1].split('=')[1];
+		} catch(err) {
+			res.end(JSON.stringify({
+				success: false, 
+				error: "A parse error occurred." 
+			}) + '\n');
+		}
+
+		var user;
+		userPresent(username, function(present) {
+			if( !(user = present) ) {
+				// Reject invalid usernames.
+				res.end(JSON.stringify({
+					success: false, 
+					error: "User does not exist." 
+				}) + '\n');
+				return;
+			}
+			
+			if( !auth(token, user.username, user.password) ) {
+				// Reject invalid tokens.
+				res.end(JSON.stringify({
+					success: false, 
+					error: "Token invalid." 
+				}) + '\n');
+				return;
+			}
+			
+			getTrips(user.username, function(trips) {
+				res.writeHead(200, {'Content-Type': 'text/csv'});
+				res.end(['Distance', 'Location', 'Purpose', 'People'].join(', ') + trips.map(function(trip) {
+					var data = [trip.distance, trip.location, trip.purpose, trip.people];
+					return ['"', data.join('", "'), '"'].join('');
+				}).join('\n'));
+			});
+		});	
+	}
 });
 
 exports.module = http.createServer(app);

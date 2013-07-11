@@ -34,3 +34,9 @@ Access Asset
 `curl localhost:8080/api/asset/matt/12345`
 	
 	RAW DATA
+
+Get Export Data
+---------------
+`curl localhost:8080/api/export/matt?token=zYcW0HF4ikBN2m3WpjCGzGZSU685XCzmjs4WjFQ4`
+
+	RAW CSV DATA
