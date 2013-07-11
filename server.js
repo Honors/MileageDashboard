@@ -363,7 +363,7 @@ app.get({
 			
 			getTrips(user.username, function(trips) {
 				res.writeHead(200, {'Content-Disposition': 'attachment; filename=export.csv'});
-				res.end(['Distance', 'Location', 'Purpose', 'People'].join(', ') + trips.map(function(trip) {
+				res.end(['Distance', 'Location', 'Purpose', 'People'].join(', ') + '\n' + trips.map(function(trip) {
 					var data = [trip.distance, trip.location, trip.purpose, trip.people];
 					return ['"', data.join('", "'), '"'].join('');
 				}).join('\n'));

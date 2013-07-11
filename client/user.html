@@ -5,6 +5,10 @@
 		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.js"></script>
 	</head>
 	<body>
+		<div id="header">
+			<h1>Mileage</h1>
+			<a href="#" id="export-link">Export</a>
+		</div>
 		<div id="content">
 			<div id="trips"></div>
 			<div id="details">
@@ -42,6 +46,7 @@
 				margin-left: -350px;
 				border: 1px solid #333;
 				float: left;
+				top: 100px;
 			}
 			#trips {
 				width: 320px;	
@@ -78,6 +83,31 @@
 				height: 75px;
 				overflow: hidden;
 			}
+			#header {
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				padding: 10px 100px;
+				box-sizing: border-box;
+				background: #333;
+			}
+			#header h1 {
+				margin: 0;
+				padding: 0;
+				float: left;
+				font-weight: lighter;
+				color: white;
+			}
+			#header a {
+				float: right;
+				color: white;
+				text-decoration: none;				
+				padding: 5px;
+			}
+			#header a:hover {
+				background: #111;
+			}
 		</style>
 		<script>
 			var trips = [];
@@ -105,8 +135,9 @@
 				return dict;
 			}(document.cookie));
 			if( !cookie.token ) {
-				location.href = '/login';
+				//location.href = '/login';
 			} else {
+				$("#export-link").attr('href', '/api/export/'+cookie.username+'?token='+cookie.token);
 				$.get('/api/trips/'+cookie.username+'?token='+cookie.token, function(data) {
 					trips = JSON.parse(data).trips;
 					var tmpl = $("#trip_tmpl").text();
