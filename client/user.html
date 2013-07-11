@@ -11,13 +11,13 @@
 				<h2>Matt's House</h2>
 				<dl>
 					<dt>Destination</dt>
-					<dd>2786 Elginfield Rd</dd>
+					<dd id="dest-value">2786 Elginfield Rd</dd>
 					<dt>People</dt>
-					<dd>Matt Neary</dd>
+					<dd id="people-value">Matt Neary</dd>
 					<dt>Purchases</dt>
-					<dd>2 x Coffee</dd>
+					<dd id="purchases-value">2 x Coffee</dd>
 					<dt>Purpose</dt>
-					<dd>App Meeting</dd>
+					<dd id="purpose-value">App Meeting</dd>
 				</dl>
 			</div>			
 		</div>		
@@ -46,13 +46,13 @@
 			#trips {
 				width: 320px;	
 				float: left;
+				border-right: 1px solid #333;
 			}
 			#details {
 				float: left;
 				width: 379px;
 				box-sizing: border-box;
 				padding: 10px;
-				border-left: 1px solid #333;
 			}
 			#details h2 {
 				margin: 0;
@@ -61,6 +61,7 @@
 				width: 320px;
 				box-sizing: border-box;
 				padding: 10px 20px;
+				border-bottom: 1px solid #ccc;
 			}
 			.trip h2 {
 				float: left;		
@@ -107,6 +108,14 @@
 			}
 			$(".trip").click(function(evt) {
 				var id = $(this).data("id");
+				var trip = trips.filter(function(trip) {
+					return trip.id == id;
+				})[0];
+				$("#details h2").text(trip.location);
+				$("#dest-value").text(trip.location);
+				$("#people-value").text(trip.people);
+				$("#purchases-value").text(trip.purchases);
+				$("#purpose-value").text(trip.purpose);
 			});
 		</script>
 	</body>
