@@ -15,13 +15,13 @@
 				<h2>Matt's House</h2>
 				<dl>
 					<dt>Destination</dt>
-					<dd id="dest-value">2786 Elginfield Rd</dd>
+					<dd id="dest-value"></dd>
 					<dt>People</dt>
-					<dd id="people-value">Matt Neary</dd>
+					<dd id="people-value"></dd>
 					<dt>Purchases</dt>
-					<dd id="purchases-value">2 x Coffee</dd>
+					<dd id="purchases-value"></dd>
 					<dt>Purpose</dt>
-					<dd id="purpose-value">App Meeting</dd>
+					<dd id="purpose-value"></dd>
 				</dl>
 			</div>			
 		</div>		
@@ -111,17 +111,20 @@
 		</style>
 		<script>
 			var trips = [];
+			var setTrip = function(trip) {
+				$("#details h2").text(trip.location||"Destination Not Specified");
+				$("#dest-value").text(trip.location||"Destination Not Specified");
+				$("#people-value").text(trip.people||"None");
+				$("#purchases-value").text(trip.purchases||"None");
+				$("#purpose-value").text(trip.purpose||"Not Specified");
+			};
 			var trip_listen = function() {
 				$(".trip").click(function(evt) {
 					var id = $(this).data("id");
 					var trip = trips.filter(function(trip) {
 						return trip.id == id;
 					})[0];
-					$("#details h2").text(trip.location||"Destination Not Specified");
-					$("#dest-value").text(trip.location||"Destination Not Specified");
-					$("#people-value").text(trip.people||"None");
-					$("#purchases-value").text(trip.purchases||"None");
-					$("#purpose-value").text(trip.purpose||"Not Specified");
+					setTrip(trip);
 				});
 			};
 			var cookie = (function(cookie) {
@@ -140,6 +143,7 @@
 				$("#export-link").attr('href', '/api/export/'+cookie.username+'?token='+cookie.token);
 				$.get('/api/trips/'+cookie.username+'?token='+cookie.token, function(data) {
 					trips = JSON.parse(data).trips;
+					setTrip(trips[0]);
 					var tmpl = $("#trip_tmpl").text();
 					trips.map(function(trip) {
 						return tmpl.replace(/\$\{([^}]+)\}/g, function($0, $1) {
