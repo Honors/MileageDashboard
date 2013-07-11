@@ -87,11 +87,11 @@
 					var trip = trips.filter(function(trip) {
 						return trip.id == id;
 					})[0];
-					$("#details h2").text(trip.location);
-					$("#dest-value").text(trip.location);
-					$("#people-value").text(trip.people);
-					$("#purchases-value").text(trip.purchases);
-					$("#purpose-value").text(trip.purpose);
+					$("#details h2").text(trip.location||"Destination Not Specified");
+					$("#dest-value").text(trip.location||"Destination Not Specified");
+					$("#people-value").text(trip.people||"None");
+					$("#purchases-value").text(trip.purchases||"None");
+					$("#purpose-value").text(trip.purpose||"Not Specified");
 				});
 			};
 			var cookie = (function(cookie) {
